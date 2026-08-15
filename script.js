@@ -3,6 +3,40 @@
 const TMDB_API_KEY = '857c83263f229dc4f84a2e7f0da48d94';
 const API_BASE = 'https://api.themoviedb.org/3';
 const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+const FALLBACK_MOVIES = [
+  {
+    id: 1,
+    title: 'Inception',
+    overview: 'Un voleur expert en extraction de secrets par le rêve entre en mission pour implanter une idée dans l’esprit d’un PDG.',
+    poster_path: '/edv5CZvWj09upOaVvsQb4pxTuNd.jpg',
+    vote_average: 8.8,
+    release_date: '2010-07-16'
+  },
+  {
+    id: 2,
+    title: 'Interstellar',
+    overview: 'Un groupe d’explorateurs traverse un trou de ver à la recherche d’une nouvelle planète habitable pour sauver l’humanité.',
+    poster_path: '/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
+    vote_average: 8.7,
+    release_date: '2014-11-05'
+  },
+  {
+    id: 3,
+    title: 'Dune',
+    overview: 'Dans un désert lointain, un jeune noble est entraîné dans une lutte pour la survie et le pouvoir.',
+    poster_path: '/8hoD3f3p1Y9z1v7G7pM3ghjKZ2n.jpg',
+    vote_average: 8.1,
+    release_date: '2021-10-22'
+  },
+  {
+    id: 4,
+    title: 'The Batman',
+    overview: 'Batman cherche à faire tomber le règne du crime à Gotham pendant une nuit de chaos.',
+    poster_path: '/74xTEgt7R36Fpooo50r9T25onhq.jpg',
+    vote_average: 8.1,
+    release_date: '2022-03-04'
+  }
+];
 
 // DOM
 const moviesEl = document.getElementById('movies');
@@ -38,14 +72,19 @@ function bindUI(){
 async function fetchTrending(){
   showLoader(true); showError(null);
   try{
-    ensureApiKey();
+    const fallback = [...FALLBACK_MOVIES];
+    if(!TMDB_API_KEY || TMDB_API_KEY.includes('YOUR_TMDB')) {
+      renderMovies(fallback);
+      return;
+    }
     const res = await fetch(`${API_BASE}/trending/movie/day?api_key=${TMDB_API_KEY}`);
     if(!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
-    renderMovies(data.results || []);
+    renderMovies(data.results && data.results.length ? data.results : fallback);
   }catch(err){
     console.error(err);
-    showError('Impossible de charger les films. Vérifiez la connexion ou la clé API.');
+    renderMovies(FALLBACK_MOVIES);
+    showError('API indisponible. Affichage en mode démonstration.');
   }finally{ showLoader(false); }
 }
 
@@ -53,29 +92,42 @@ async function searchMovies(query){
   if(!query) return fetchTrending();
   showLoader(true); showError(null);
   try{
-    ensureApiKey();
+    if(!TMDB_API_KEY || TMDB_API_KEY.includes('YOUR_TMDB')) {
+      const filtered = FALLBACK_MOVIES.filter(movie => movie.title.toLowerCase().includes(query.toLowerCase()));
+      renderMovies(filtered.length ? filtered : FALLBACK_MOVIES);
+      return;
+    }
     const url = `${API_BASE}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`;
     const res = await fetch(url);
     if(!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
-    renderMovies(data.results || []);
+    renderMovies(data.results && data.results.length ? data.results : FALLBACK_MOVIES);
   }catch(err){
     console.error(err);
-    showError('Recherche échouée. Réessayez.');
+    const filtered = FALLBACK_MOVIES.filter(movie => movie.title.toLowerCase().includes(query.toLowerCase()));
+    renderMovies(filtered.length ? filtered : FALLBACK_MOVIES);
+    showError('Recherche impossible, affichage des résultats de démonstration.');
   }finally{ showLoader(false); }
 }
 
 async function fetchMovieDetails(id){
   try{
-    ensureApiKey();
+    if(!TMDB_API_KEY || TMDB_API_KEY.includes('YOUR_TMDB')) {
+      return FALLBACK_MOVIES.find(movie => String(movie.id) === String(id)) || null;
+    }
     const res = await fetch(`${API_BASE}/movie/${id}?api_key=${TMDB_API_KEY}&language=fr-FR`);
     if(!res.ok) throw new Error('Détails indisponibles');
     return await res.json();
-  }catch(e){ console.error(e); return null; }
+  }catch(e){
+    console.error(e);
+    return FALLBACK_MOVIES.find(movie => String(movie.id) === String(id)) || null;
+  }
 }
 
 function ensureApiKey(){
-  if(!TMDB_API_KEY || TMDB_API_KEY.includes('YOUR_TMDB')) throw new Error('API key TMDB non définie');
+  if(!TMDB_API_KEY || TMDB_API_KEY.includes('YOUR_TMDB')) {
+    console.warn('TMDB key absent: mode démonstration activé');
+  }
 }
 
 // --- UI helpers ---
