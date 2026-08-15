@@ -1,30 +1,53 @@
 # CineMatch
 
-Application front-end consommant l'API TMDB pour afficher les films en tendance et permettre la recherche.
+Ce projet est une application web de catalogue de films développée en JavaScript vanilla. Elle utilise l’API TMDB pour afficher les films populaires, rechercher des titres et consulter les détails d’un film.
 
-- Dossier : `projet 2`
-- Description : recherche, affichage des tendances, modal de détails, favoris persistants (localStorage).
+## Présentation
 
-Prérequis
-- Clé API TMDB (obligatoire)
-- Navigateur moderne
-- Serveur HTTP local pour tester
+- films tendance du jour
+- recherche de films
+- affichage des résultats dans une grille
+- modale de détails
+- gestion des favoris
+- sauvegarde des favoris dans le navigateur
 
-Obtention de la clé TMDB
-1. Inscrivez-vous sur https://www.themoviedb.org/ et créez une clé API.
-2. Ouvrez `projet 2/script.js` et remplacez la constante `TMDB_API_KEY` par votre clé.
+## API utilisée
 
-Lancer
+- TMDB API : https://www.themoviedb.org/documentation/api
+- Documentation officielle : https://developer.themoviedb.org/docs
+
+Pour utiliser cette application, il faut générer une clé API TMDB depuis le site officiel.
+
+## Fichiers
+
+- `index.html` : structure du site
+- `style.css` : styles et mise en page
+- `script.js` : logique de recherche, affichage des films et gestion des favoris
+
+## Ouvrir le projet
+
+1. Ouvrez un terminal dans le dossier du projet
+2. Remplacez la valeur de `TMDB_API_KEY` dans le fichier JavaScript
+3. Lancez le serveur local :
+
 ```bash
 python -m http.server 8000
 ```
-Puis : `http://localhost:8000/projet%202/index.html`
 
-Fichiers
-- `index.html` — interface et modal
-- `style.css` — styles
-- `script.js` — fetch TMDB (trending/search), modal, favoris
+4. Ouvrez dans le navigateur :
 
-Remarques
-- Les favoris sont stockés dans `localStorage` sous une clé dédiée.
-- Vérifiez la console du navigateur pour les erreurs réseau ou clés manquantes.
+```txt
+http://localhost:8000/index.html
+```
+
+## Utilisation
+
+- Entrez un nom de film dans la barre de recherche
+- Consultez les films tendances sur la page d’accueil
+- Cliquez sur un film pour voir ses détails dans la modale
+- Ajoutez des films aux favoris
+- Les favoris restent enregistrés dans le navigateur
+
+## Validation
+
+Le projet est compatible avec les navigateurs modernes et a été conçu pour fonctionner avec une clé API TMDB valide.
