@@ -1,6 +1,6 @@
 // CineMatch - script.js
 // Remarque : vous devez définir la constante `TMDB_API_KEY` avec votre clé API TMDB
-const TMDB_API_KEY = 'YOUR_TMDB_API_KEY_HERE'; // <-- Remplacez par votre clé
+const TMDB_API_KEY = '857c83263f229dc4f84a2e7f0da48d94';
 const API_BASE = 'https://api.themoviedb.org/3';
 const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
 
